@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  app:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 8080:80
+    volumes:
+      - ./public:/var/www/html/app/public
+    networks:
+      - app-net
+
+  db:
+    image: mysql:5.7.34
+    volumes:
+      - ./.docker/mysql/var/lib/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: users
+    networks:
+      - app-net
+
+  adminer:
+    image: adminer:4.7.5
+    depends_on:
+      - db
+    ports:
+      - 8081:8080
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
